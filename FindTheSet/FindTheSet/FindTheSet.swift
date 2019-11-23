@@ -105,47 +105,31 @@ class FindTheSet {
         return table.count == 24
     }
     
-    private func allSameOrAllDiff(a: Card.Feature, b: Card.Feature, c: Card.Feature) -> (allSame: Int, allDiff: Int) {
-        return  (allSame: a == b && b == c ? 1 : 0, allDiff: a != b && b != c && a != c ? 1 : 0)
-    }
-    
-    func match(aC: Card? = nil, bC: Card? = nil, cC: Card? = nil) -> Bool? {
-        if aC == nil && selectedCards.count != 3 {
+    func isASet(_ set: [Card]? = nil) -> Bool? {
+        if set == nil && selectedCards.count != 3 {
             return nil
         }
         
-        let a = aC ?? selectedCards[0]
-        let b = bC ?? selectedCards[1]
-        let c = cC ?? selectedCards[2]
+        let cards = set ?? selectedCards
+        let numberOfFeature = cards[0].values.count
         
-        let color = allSameOrAllDiff(a: a.color, b: b.color, c: c.color)
-        let shape = allSameOrAllDiff(a: a.shape, b: b.shape, c: c.shape)
-        let shapes = allSameOrAllDiff(a: a.shapes, b: b.shapes, c: c.shapes)
-        let shading = allSameOrAllDiff(a: a.shading, b: b.shading, c: c.shading)
+        var sumValues = [Int](repeating: 0, count: numberOfFeature)
         
-        let totalSame = color.allSame + shape.allSame + shapes.allSame + shading.allSame
-        let totalDiff = color.allDiff + shape.allDiff + shapes.allDiff + shading.allDiff
+        for cards in cards {
+            for index in 0..<numberOfFeature {
+                sumValues[index] += cards.values[index]
+            }
+        }
         
-        return totalSame == 0 && totalDiff == 4 ||
-            totalSame == 1 && totalDiff == 3 ||
-            totalSame == 2 && totalDiff == 2 ||
-            totalSame == 3 && totalDiff == 1
+        return sumValues.reduce(true, { $0 && ($1 % 3) == 0 })
     }
     
     func findASet() -> [Int]? {
-        for indexA in table.indices {
-            let a = table[indexA]
-            for indexB in table.indices {
-                let b = table[indexB]
-                for indexC in table.indices {
-                    let c = table[indexC]
-                    
-                    if a == b || b == c || a == c {
-                        continue
-                    }
-                    
-                    if match(aC: a, bC: b, cC: c) == true {
-                        return [indexA, indexB, indexC]
+        for i in 0..<table.count - 2 {
+            for j in (i+1)..<table.count - 1 {
+                for k in (j+1)..<table.count {
+                    if isASet([table[i], table[j], table[k]]) == true {
+                        return [i, j, k]
                     }
                 }
             }

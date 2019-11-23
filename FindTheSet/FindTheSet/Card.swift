@@ -8,13 +8,15 @@
 
 import Foundation
 
-// number of shapes (one, two, or three), shape (diamond, squiggle, oval), shading (solid, striped, or open), and color (red, green, or purple).
-
 struct Card: Equatable {
     var shapes: Feature
     var shape: Feature
     var shading: Feature
     var color: Feature
+    
+    var values: [Int] {
+        [self.shapes.rawValue, self.shape.rawValue, self.shading.rawValue, self.color.rawValue]
+    }
     
     enum Feature: Int {
         case one = 1

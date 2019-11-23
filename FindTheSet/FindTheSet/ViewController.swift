@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     
     private var score = 0
     
-    var game = FindTheSet()
+    let game = FindTheSet()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +27,7 @@ class ViewController: UIViewController {
     
     @IBAction func cardSelect(_ sender: UIButton) {
         if game.selectedCards.count == 3 {
-            if game.match() != nil {
+            if game.isASet() != nil {
                 game.selectedCards.removeAll()
             }
         }
@@ -39,7 +39,7 @@ class ViewController: UIViewController {
         updateViewFromModel()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            if self.game.match() == true {
+            if self.game.isASet() == true {
                 self.score += 100
                 self.game.deal()
                 self.updateViewFromModel()
@@ -54,6 +54,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func debug(_ sender: Any) {
+        print(game.findASet())
     }
     
     private func updateViewFromModel() {
@@ -79,9 +80,9 @@ class ViewController: UIViewController {
                 if game.selectedCards.contains(card) {
                     borderWidth = 2.0
                     
-                    if game.match() == true {
+                    if game.isASet() == true {
                         borderColor = UIColor.green.cgColor
-                    } else if game.match() == false {
+                    } else if game.isASet() == false {
                         borderColor = UIColor.red.cgColor
                     }
                 }
