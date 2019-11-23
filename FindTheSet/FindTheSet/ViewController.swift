@@ -100,20 +100,22 @@ class ViewController: UIViewController {
         deckLabel.text = "🃏 \(game.deck.count)"
     }
     
-    private let colorOne = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
-    private let colorTwo = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
-    private let colorThree = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1)
-    
     private func image(for card: Card) -> NSAttributedString {
-        // Shapes ▲ = 1,  ● = 2, ■ = 3
         let font = UIFont.systemFont(ofSize: 30)
         
-        let shape = card.shape == .one ? "▲" : card.shape == .two ? "●" : "■"
+        let shape = ModelToView.shape[card.shape]!
+        let color = ModelToView.color[card.color]!
+        let alpha = ModelToView.alpha[card.shading]!
         
-        let shapes = card.shapes == .one ? "\n\(shape)\n" : card.shapes == .two ? "\(shape)\n\(shape)" : "\(shape)\n\(shape)\n\(shape)"
-        
-        let color = card.color == .one ? colorOne : card.color == .two ? colorTwo : colorThree
-        let alpha = card.shading == .one ? 1.0 : card.shading == .two ? 0.40 : 0.0
+        let shapes: String
+        switch card.shapes {
+        case .one:
+            shapes = "\n\(shape)\n"
+        case .two:
+            shapes = "\(shape)\n\(shape)"
+        case .three:
+            shapes = "\(shape)\n\(shape)\n\(shape)"
+        }
         
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
@@ -124,5 +126,11 @@ class ViewController: UIViewController {
         
         return NSAttributedString(string: shapes, attributes: attributes)
     }
+}
+
+struct ModelToView {
+    static let shape: [Card.Feature: String] = [.one: "●", .two: "▲", .three: "■"]
+    static var color: [Card.Feature: UIColor] = [.one: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1), .two: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1), .three: #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1)]
+    static var alpha: [Card.Feature: CGFloat] = [.one: 1.0, .two: 0.40, .three: 0.00]
 }
 
